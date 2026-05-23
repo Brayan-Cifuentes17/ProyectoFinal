@@ -1,206 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, viewport-fit=cover">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Chat para superheroes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>StudySync</title>
 
-    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400' rel='stylesheet' type='text/css'>
-	<link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
+  <link rel="stylesheet" href="js/libs/plugins/mdtoast.min.css">
+  <link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="js/libs/plugins/mdtoast.min.css">
+  <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
+  <link rel="manifest" href="manifest.json">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
-
-    <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
-
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Android -->
-    <meta name="theme-color" content="#3498db">
-
-    <!-- IOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-
-
-    <link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="img/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="img/icons/icon-152x152.png">
-
-    <!-- iPhone X (1125px x 2436px) -->
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="img/icons-ios/apple-launch-1125x2436.png">
-    <!-- iPhone 8, 7, 6s, 6 (750px x 1334px) -->
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="img/icons-ios/apple-launch-750x1334.png">
-    <!-- iPhone 8 Plus, 7 Plus, 6s Plus, 6 Plus (1242px x 2208px) -->
-    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="img/icons-ios/apple-launch-1242x2208.png">
-    <!-- iPhone 5 (640px x 1136px) -->
-    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="img/icons-ios/apple-launch-640x1136.png">
-
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <meta name="apple-mobile-web-app-title" content="Twittor!">
-
+  <meta name="theme-color" content="#1A1A2E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StudySync">
+  <link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
 </head>
 <body>
-        <!-- Titulo -->
-        <span class="first"> 
-            <span id="salir-btn" class="fa fa-sign-out-alt out oculto animated fadeIn"></span>
-            <span id="titulo">
-                <i class="fa fa-user"></i>
-                Seleccione Personaje
-            </span>
-            <span id="nuevo-btn" class="fa fa-pen-square new oculto animated fadeIn fast"></span>
-        </span>
-        <!-- Fin Titulo -->
 
-        <!-- Modal -->
-        <div id="modal" class="oculto">
-            <img id="modal-avatar" src="img/avatars/spiderman.jpg">
+  <!-- ── PANTALLA DE SELECCIÓN DE PERFIL ── -->
+  <div id="seleccion" class="seleccion-screen animated fadeIn fast">
+    <div class="seleccion-card">
+      <div class="seleccion-logo">Study<span>Sync</span></div>
+      <p class="seleccion-sub">Tu cuaderno académico siempre contigo</p>
 
-            <span class="first"> 
-                <span id="titulo-modal">Nuevo mensaje</span>
-                <span id="cancel-btn" class="fa fa-times"></span>
-            </span>
-            
+      <div class="seleccion-form">
+        <input id="inputNombre" type="text" placeholder="Tu nombre" maxlength="30" autocomplete="off">
+        <input id="inputCarrera" type="text" placeholder="Tu carrera" maxlength="50" autocomplete="off">
+      </div>
 
-            <div class="nuevo-mensaje">
-                <textarea id="txtMensaje" placeholder="Nuevo mensaje..." rows="5"></textarea>
+      <div class="avatares-grid">
+        <img data-avatar="avatar1" src="img/avatars/avatar1.png" alt="Avatar 1" class="avatar-opt">
+        <img data-avatar="avatar2" src="img/avatars/avatar2.png" alt="Avatar 2" class="avatar-opt">
+        <img data-avatar="avatar3" src="img/avatars/avatar3.png" alt="Avatar 3" class="avatar-opt">
+        <img data-avatar="avatar4" src="img/avatars/avatar4.png" alt="Avatar 4" class="avatar-opt">
+      </div>
 
-                <!-- <div class="modal-mapa oculto">
-                    <iframe
-                        width="100%"
-                        height="250"
-                        frameborder="0"
-                        src="https://www.google.com/maps/embed/v1/view?key=AIzaSyA-HXVa2jtkGfKtIJwisxgC46RaWqC1xuI&center=14.027334, -87.220878&zoom=17" allowfullscreen>
-                        </iframe>
-                </div > -->
-                <div class="camara-contenedor fadeIn fast oculto" align="center">
-                    
-                    <video id="player" autoplay style="height: 300px;"></video>
+      <button id="btnEntrar" class="btn-entrar" disabled>Entrar</button>
+    </div>
+  </div>
 
-                    <button id="tomar-foto-btn">
-                        <i class="fa fa-camera"></i>
-                        Tomar Foto
-                    </button>
-                    
-                    <button id="grabar-video-btn" style="background-color: #e74c3c; margin-top: 5px;">
-                        <i class="fa fa-video"></i> Grabar Video
-                    </button>
-                    
-                    <button id="detener-video-btn" class="oculto" style="background-color: #34495e; margin-top: 5px;">
-                        <i class="fa fa-stop"></i> Detener Video
-                    </button>
-                </div>
+  <!-- ── APP PRINCIPAL ── -->
+  <div id="app" class="app-container oculto">
 
-            </div>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="navbar-brand">Study<span>Sync</span></div>
+      <div class="navbar-right">
+        <button id="btnDarkMode" class="nav-icon-btn" aria-label="Modo oscuro">
+          <i class="fa fa-moon"></i>
+        </button>
+        <button id="btnSalir" class="profile-chip" aria-label="Salir">
+          <div id="profileDot" class="profile-dot">?</div>
+          <span id="profileNombre">—</span>
+        </button>
+      </div>
+    </nav>
 
-            
-            <!-- boton de enviar -->
+    <!-- BARRA DE BÚSQUEDA -->
+    <div class="search-section">
+      <div class="search-wrap">
+        <i class="fa fa-search search-icon"></i>
+        <input id="inputBuscar" type="text" placeholder="Buscar apuntes, materias, tags…" autocomplete="off">
+      </div>
+    </div>
 
-            <div id="post-btn" class="fab">
-                <i class="fa fa-paper-plane"></i>
-            </div>
+    <!-- FILTROS -->
+    <div class="filtros-row" id="filtrosRow">
+      <button class="chip active" data-filter="todos">Todos</button>
+      <button class="chip" data-filter="apunte">Apuntes</button>
+      <button class="chip" data-filter="evento">Eventos</button>
+      <!-- Las materias se insertan dinámicamente -->
+    </div>
 
-            <div id="location-btn" class="fab-marker">
-                <i class="fa fa-map-marker-alt"></i>
-            </div>
+    <!-- TIMELINE DE APUNTES -->
+    <ul id="timeline" class="timeline"></ul>
+    <button id="btnExportar" class="fab-export" aria-label="Exportar PDF">
+    <i class="fa fa-file-pdf"></i>
+    </button>
+    <!-- BOTÓN FLOTANTE NUEVO APUNTE -->
+    <button id="btnNuevo" class="fab" aria-label="Nuevo apunte">
+      <i class="fa fa-plus"></i>
+    </button>
 
-            <div id="photo-btn" class="fab-photo">
-                <i class="fa fa-camera"></i>
-            </div>
+  </div>
+  <!-- FIN APP PRINCIPAL -->
 
-        </div>
-        <!-- Fin Modal -->
+  <!-- ── MODAL NUEVO APUNTE ── -->
+  <div id="modal" class="modal oculto">
+    <div class="modal-inner">
 
+      <div class="modal-header">
+        <span class="modal-titulo">Nuevo apunte</span>
+        <button id="btnCancelar" class="modal-close" aria-label="Cerrar">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
 
-        <!-- Seleccion de personaje -->
-        <div id="seleccion" class="seleccion animated fadeIn fast" align="center">
-        
-            <!-- Botón de notificaciones -->
-            <button class="oculto btn-noti-activadas">Notificaciones Activadas</button>
-            <button class="oculto btn-noti-desactivadas">Notificaciones Desactivadas</button>
-            <!-- Fin de boton de notificaciones -->
+      <div class="modal-body">
 
-            <div>
-                <img data-user="spiderman" src="img/avatars/spiderman.jpg" alt="spiderman" class="seleccion-avatar">
-            </div>
-
-            <div>
-                <img data-user="ironman" src="img/avatars/ironman.jpg" alt="ironman" class="seleccion-avatar">
-            </div>
-
-            <div>
-                <img data-user="wolverine" src="img/avatars/wolverine.jpg" alt="wolverine" class="seleccion-avatar">
-            </div>
-
-            <div>
-                <img data-user="thor" src="img/avatars/thor.jpg" alt="thor" class="seleccion-avatar">
-            </div>
-
-            <div>
-                <img data-user="hulk" src="img/avatars/hulk.jpg" alt="hulk" class="seleccion-avatar">
-            </div>
-
+        <!-- Tipo -->
+        <div class="field-group">
+          <label class="field-label">Tipo</label>
+          <div class="tipo-toggle">
+            <button class="tipo-btn active" data-tipo="apunte">
+              <i class="fa fa-book-open"></i> Apunte
+            </button>
+            <button class="tipo-btn" data-tipo="evento">
+              <i class="fa fa-calendar-alt"></i> Evento
+            </button>
+          </div>
         </div>
 
-        <!-- FIN Seleccion de personaje -->
+        <!-- Título -->
+        <div class="field-group">
+          <label class="field-label" for="inputTitulo">Título *</label>
+          <input id="inputTitulo" type="text" placeholder="Ej: Parcial de Cálculo" maxlength="100">
+        </div>
 
-        <!-- Lista de mensajes -->
-        <ul id="timeline" class="timeline oculto">
-            
-            <!-- Mensaje -->
-            <!-- <li class="animated fadeIn fast">
-                <div class="avatar">
-                    <img src="img/avatars/spiderman.jpg">
-                </div>
-                <div class="bubble-container">
-                    <div class="bubble">
-                        <h3>@spiderman</h3>
-                        <br/>
-                        La tía May, hizo unos panqueques en forma de ironman!
-                    </div>
-                    
-                    <div class="arrow"></div>
-                </div>
-            </li> -->
-            <!-- Fin del mensaje -->
+        <!-- Materia -->
+        <div class="field-group">
+          <label class="field-label" for="inputMateria">Materia *</label>
+          <input id="inputMateria" type="text" placeholder="Ej: Cálculo III" maxlength="60"
+                 list="materiasList">
+          <datalist id="materiasList"></datalist>
+        </div>
 
-            <!-- Mapa message -->
-            <!-- <li class="animated fadeIn fast">
-                <div class="avatar">
-                    <img src="img/avatars/spiderman.jpg">
-                </div>
-                <div class="bubble-container">
-                    <div class="bubble">
-                        <iframe
-                            width="100%"
-                            height="250"
-                            frameborder="0" style="border:0"
-                            src="https://www.google.com/maps/embed/v1/view?key=AIzaSyA-HXVa2jtkGfKtIJwisxgC46RaWqC1xuI&center=14.027334, -87.220878&zoom=17" allowfullscreen>
-                            </iframe>
-                    </div>
-                    
-                    <div class="arrow"></div>
-                </div>
-            </li>  -->
-            <!-- Fin del mensaje -->
+        <!-- Contenido -->
+        <div class="field-group">
+          <label class="field-label" for="txtContenido">Contenido</label>
+          <textarea id="txtContenido" placeholder="Escribe tu apunte aquí…" rows="4"></textarea>
+        </div>
 
-        </ul>
-        <!-- Fin Lista de mensajes -->
+        <!-- Tags -->
+        <div class="field-group">
+          <label class="field-label" for="inputTags">Tags</label>
+          <input id="inputTags" type="text" placeholder="Ej: #parcial #quiz (separados por espacio)">
+        </div>
 
+        <!-- Fecha de entrega (solo evento) -->
+        <div class="field-group" id="grupoFecha" style="display:none">
+          <label class="field-label" for="inputFecha">Fecha de entrega</label>
+          <input id="inputFecha" type="datetime-local">
+        </div>
 
-      
-    
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="js/libs/plugins/mdtoast.min.js"></script>
-        
-        <!-- Camara Class -->
-        <script src="js/camara-class.js"></script>
-        <script src="js/app.js"></script>
-    
+        <!-- Acciones de recursos nativos — Persona 2 conecta aquí -->
+        <div class="recursos-row">
+          <button id="btnUbicacion" class="recurso-btn" title="Adjuntar ubicación">
+            <i class="fa fa-map-marker-alt"></i>
+          </button>
+          <button id="btnFoto" class="recurso-btn" title="Tomar foto">
+            <i class="fa fa-camera"></i>
+          </button>
+          <button id="btnAudio" class="recurso-btn" title="Grabar audio">
+            <i class="fa fa-microphone"></i>
+          </button>
+          <button id="btnVideo" class="recurso-btn" title="Grabar video">
+            <i class="fa fa-video"></i>
+          </button>
+        </div>
+
+        <!-- Preview de recursos adjuntos -->
+        <div id="recursosPreview" class="recursos-preview"></div>
+
+        <!-- Cámara (Persona 2 activa esto) -->
+        <div id="camaraContenedor" class="camara-contenedor oculto">
+          <video id="player" autoplay></video>
+          <div class="camara-btns">
+            <button id="btnTomarFoto">
+              <i class="fa fa-camera"></i> Tomar foto
+            </button>
+            <button id="btnGrabarVideo" style="background:#e74c3c">
+              <i class="fa fa-video"></i> Grabar video
+            </button>
+            <button id="btnDetenerVideo" class="oculto" style="background:#34495e">
+              <i class="fa fa-stop"></i> Detener
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button id="btnGuardar" class="btn-guardar">
+          <i class="fa fa-paper-plane"></i> Guardar apunte
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <!-- FIN MODAL -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/libs/plugins/mdtoast.min.js"></script>
+  <script src="js/camara-class.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
