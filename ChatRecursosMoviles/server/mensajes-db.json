@@ -1,0 +1,72 @@
+[
+  {
+    "_id": "2026-06-03T06:49:16.437Z",
+    "tipo": "apunte",
+    "titulo": "taller",
+    "contenido": "",
+    "materia": "calculo",
+    "tags": [],
+    "fechaCreacion": "2026-06-03T06:49:16.437Z",
+    "fechaEntrega": null,
+    "foto": null,
+    "audio": null,
+    "video": null,
+    "lat": null,
+    "lng": null,
+    "user": "leo"
+  },
+  {
+    "_id": "2026-06-03T06:17:40.324Z",
+    "tipo": "apunte",
+    "titulo": "Clase 21/05/2026",
+    "contenido": "",
+    "materia": "Electiva III",
+    "tags": [],
+    "fechaCreacion": "2026-06-03T06:17:40.325Z",
+    "fechaEntrega": null,
+    "foto": null,
+    "audio": null,
+    "video": null,
+    "lat": null,
+    "lng": null,
+    "user": "Leo"
+  },
+  {
+    "_id": "2026-05-23T08:00:00.000Z",
+    "tipo": "apunte",
+    "titulo": "Introducción a PWA",
+    "contenido": "Una Progressive Web App combina lo mejor de la web y las apps nativas: instalable, offline-first y con acceso a recursos del dispositivo.",
+    "materia": "Electiva III",
+    "tags": [
+      "#pwa",
+      "#serviceworker"
+    ],
+    "fechaCreacion": "2026-05-23T08:00:00.000Z",
+    "fechaEntrega": null,
+    "foto": null,
+    "audio": null,
+    "video": null,
+    "lat": null,
+    "lng": null,
+    "user": "estudiante"
+  },
+  {
+    "_id": "2026-05-22T14:00:00.000Z",
+    "tipo": "evento",
+    "titulo": "Parcial de Cálculo III",
+    "contenido": "Temas: series de Taylor, integrales dobles y triples. Llevar calculadora.",
+    "materia": "Cálculo III",
+    "tags": [
+      "#parcial",
+      "#calculo"
+    ],
+    "fechaCreacion": "2026-05-22T14:00:00.000Z",
+    "fechaEntrega": "2026-05-30T07:00:00.000Z",
+    "foto": null,
+    "audio": null,
+    "video": null,
+    "lat": null,
+    "lng": null,
+    "user": "estudiante"
+  }
+]
