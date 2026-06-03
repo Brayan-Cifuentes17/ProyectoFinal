@@ -102,4 +102,27 @@ class Camara {
         });
     }
 
+    iniciarGrabacionAudio() {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(stream => {
+            this.audioStream = stream;
+            this.audioChunks = [];
+            this.audioRecorder = new MediaRecorder(stream);
+            this.audioRecorder.ondataavailable = e => this.audioChunks.push(e.data);
+            this.audioRecorder.start();
+        });
+    }
+
+    detenerGrabacionAudio() {
+        return new Promise((resolve, reject) => {
+            this.audioRecorder.onstop = () => {
+                const blob = new Blob(this.audioChunks, { type: "audio/webm" });
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => resolve(reader.result);
+            };
+            this.audioRecorder.stop();
+            this.audioStream.getTracks().forEach(t => t.stop());
+        });
+    }
 }

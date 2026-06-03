@@ -560,9 +560,21 @@ $btnUbicacion.on('click', function () {
   );
 });
 
-// Audio — Persona 2 implementa esto con MediaRecorder
+// Audio — Persona 2
+let grabandoAudio = false;
 $btnAudio.on('click', function () {
-  toast('Función de audio — implementada por Persona 2', 'info');
+  if (!grabandoAudio) {
+    grabandoAudio = true;
+    $btnAudio.text('⏹ Detener audio');
+    camara.iniciarGrabacionAudio();
+  } else {
+    grabandoAudio = false;
+    $btnAudio.text('🎤 Grabar audio');
+    camara.detenerGrabacionAudio().then(function(base64) {
+      adjuntos.audio = base64;
+      toast('Audio grabado ✓', 'success');
+    });
+  }
 });
 
 // ── ONLINE / OFFLINE
