@@ -173,6 +173,7 @@ function loginUI(entrando) {
     $app.removeClass('oculto');
     $profileDot.text(iniciales(usuario.nombre));
     $profileNombre.text(usuario.nombre.split(' ')[0]);
+    suscribirPush();
   } else {
     $seleccion.removeClass('oculto').addClass('animated fadeIn fast');
     $app.addClass('oculto');
@@ -305,6 +306,7 @@ function getMensajes() {
       apuntesCache = data;
       actualizarMaterias(data);
       renderTimeline(data);
+      revisarNotificacionesLocales(data);
     })
     .catch(function() {
       toast('Sin conexión — mostrando datos en caché', 'warning');
@@ -575,6 +577,56 @@ function estadoConexion() {
 
 window.addEventListener('online',  estadoConexion);
 window.addEventListener('offline', estadoConexion);
+
+// ── NOTIFICACIONES PUSH Y LOCALES ─────────────────────────────────────────────
+
+function suscribirPush() {
+  if (!('serviceWorker' in navigator)) return;
+  if (!('Notification' in window)) return;
+
+  Notification.requestPermission().then(function(result) {
+    if (result === 'granted') {
+      navigator.serviceWorker.ready.then(function(reg) {
+        reg.pushManager.getSubscription().then(function(subs) {
+          if (!subs) {
+            fetch('/api/key').then(function(res) { return res.text(); })
+            .then(function(key) {
+              return reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: key
+              });
+            })
+            .then(function(newSubs) {
+              return fetch('/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newSubs)
+              });
+            });
+          }
+        });
+      });
+    }
+  });
+}
+
+function revisarNotificacionesLocales(apuntes) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+
+  apuntes.forEach(function(a) {
+    if (a.tipo === 'evento' && a.fechaEntrega) {
+      var dias = diasRestantes(a.fechaEntrega);
+      if (dias >= 0 && dias <= 3) {
+        new Notification("Recordatorio — " + a.titulo, {
+          body: dias === 0 ? "¡Entrega hoy!" : "Faltan " + dias + " días",
+          icon: "img/avatars/" + (usuario ? usuario.avatar : "avatar1") + ".png"
+        });
+      }
+    }
+  });
+}
+
 // ── EXPORTAR PDF ──────────────────────────────────────────────────────────────
 
 $('#btnExportar').on('click', function () {

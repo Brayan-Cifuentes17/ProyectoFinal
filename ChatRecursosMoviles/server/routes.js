@@ -1,6 +1,7 @@
 // routes.js — Rutas de StudySync
 const express = require('express');
 const router = express.Router();
+const push = require('./push.js');
 
 // ─── BASE DE DATOS EN MEMORIA ────────────────────────────────────────────────
 // En desarrollo los apuntes viven aquí.
@@ -121,6 +122,16 @@ router.post('/', (req, res) => {
 
   // Persona 4 (notificaciones) llamará a push.sendPush() aquí
   // cuando el apunte sea un evento con fechaEntrega próxima.
+  if (apunte.tipo === "evento" && apunte.fechaEntrega) {
+    const dias = Math.round(
+      (new Date(apunte.fechaEntrega) - new Date()) / 86400000
+    );
+    push.sendPush({
+      titulo: "Recordatorio — " + apunte.titulo,
+      cuerpo: "Faltan " + dias + " dias para la entrega",
+      usuario: apunte.user
+    });
+  }
 
   res.json({ ok: true, apunte });
 });
@@ -147,8 +158,25 @@ router.get('/materias', (req, res) => {
 });
 
 // ─── Rutas reservadas para Persona 4 (Notificaciones / Push) ─────────────────
-// POST /api/subscribe   → almacenar suscripción push
-// GET  /api/key         → retornar VAPID public key
-// POST /api/push        → enviar push manual
+router.post('/subscribe', (req, res) => {
+  const suscripcion = req.body;
+  push.addSubscription(suscripcion);
+  res.json(suscripcion);
+});
+
+router.get('/key', (req, res) => {
+  const key = push.getKey();
+  res.send(key);
+});
+
+router.post('/push', (req, res) => {
+  const post = {
+    titulo: req.body.titulo,
+    cuerpo: req.body.cuerpo,
+    usuario: req.body.usuario
+  };
+  push.sendPush(post);
+  res.json(post);
+});
 
 module.exports = router;

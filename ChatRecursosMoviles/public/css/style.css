@@ -142,12 +142,12 @@ html, body {
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 56px;
+  height: calc(56px + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 16px 0 16px;
   background: var(--bg-navbar);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
   z-index: 900;
 }
 
@@ -193,7 +193,7 @@ html, body {
 }
 
 /* ── APP CONTAINER ── */
-.app-container { padding-top: 56px; }
+.app-container { padding-top: calc(56px + env(safe-area-inset-top)); }
 
 /* ── BÚSQUEDA ── */
 .search-section {
