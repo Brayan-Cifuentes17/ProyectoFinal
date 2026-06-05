@@ -2,7 +2,7 @@
 const fs = require('fs');
 
 
-const urlsafeBase64 = require('urlsafe-base64');
+//const urlsafeBase64 = require('urlsafe-base64');
 const vapid = require('./vapid.json');
 
 const webpush = require('web-push');
@@ -20,7 +20,7 @@ let suscripciones = require('./subs-db.json');
 
 
 module.exports.getKey = () => {
-    return urlsafeBase64.decode( vapid.publicKey );
+    return vapid.publicKey;
 };
 
 
@@ -45,7 +45,7 @@ module.exports.sendPush = ( post ) => {
 
 
         const pushProm = webpush.sendNotification( suscripcion , JSON.stringify( post ) )
-            .then( console.log( 'Notificacion enviada ') )
+            .then( () => console.log('Notificación enviada') )
             .catch( err => {
 
                 console.log('Notificación falló');
