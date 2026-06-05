@@ -89,8 +89,8 @@ function deadlineChip(isoFecha) {
   if (dias === null) return '';
   if (dias < 0)  return '<span class="deadline deadline-alert">Vencido</span>';
   if (dias === 0) return '<span class="deadline deadline-alert">¡Hoy!</span>';
-  if (dias <= 3) return '<span class="deadline deadline-alert">⏰ Faltan ' + dias + ' día' + (dias===1?'':'s') + '</span>';
-  if (dias <= 7) return '<span class="deadline deadline-warn">⏰ Faltan ' + dias + ' días</span>';
+  if (dias <= 3) return '<span class="deadline deadline-alert"> Faltan ' + dias + ' día' + (dias===1?'':'s') + '</span>';
+  if (dias <= 7) return '<span class="deadline deadline-warn"> Faltan ' + dias + ' días</span>';
   return '<span class="deadline deadline-ok">📅 ' + formatearFecha(isoFecha) + '</span>';
 }
 

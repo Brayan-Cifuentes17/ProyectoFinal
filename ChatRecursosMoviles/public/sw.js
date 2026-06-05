@@ -32,13 +32,27 @@ const APP_SHELL_INMUTABLE = [
 
 // ── INSTALL ──────────────────────────────────────────────────────────────────
 self.addEventListener("install", (e) => {
-  const cacheStatic = caches
-    .open(STATIC_CACHE)
-    .then((cache) => cache.addAll(APP_SHELL));
-  const cacheInmutable = caches
-    .open(INMUTABLE_CACHE)
-    .then((cache) => cache.addAll(APP_SHELL_INMUTABLE));
-  e.waitUntil(Promise.all([cacheStatic, cacheInmutable]));
+  e.waitUntil(
+    Promise.allSettled([
+
+      // Recursos locales — CRÍTICOS: si fallan, el SW no instala
+      caches.open(STATIC_CACHE).then((cache) =>
+        cache.addAll(APP_SHELL)
+      ),
+
+      // CDNs externas — OPCIONALES: fallo silencioso
+      caches.open(INMUTABLE_CACHE).then((cache) =>
+        Promise.allSettled(
+          APP_SHELL_INMUTABLE.map((url) =>
+            cache.add(url).catch((err) =>
+              console.warn("[SW] No se cacheó:", url, err.message)
+            )
+          )
+        )
+      ),
+
+    ])
+  );
 });
 
 // ── ACTIVATE ─────────────────────────────────────────────────────────────────
