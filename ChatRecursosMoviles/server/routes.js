@@ -174,6 +174,42 @@ router.delete("/:id", (req, res) => {
   res.json({ ok: true });
 });
 
+// ─── PUT /api/:id ──────────────────────────────────────────────────────────────
+// Edita un apunte existente por su _id
+router.put('/:id', (req, res) => {
+  const id = decodeURIComponent(req.params.id);
+  apuntes = leerArchivo();
+  const index = apuntes.findIndex(a => a._id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ ok: false, error: 'Apunte no encontrado' });
+  }
+
+  const apunteActual = apuntes[index];
+
+  const apunteActualizado = {
+    _id:           apunteActual._id,
+    tipo:          req.body.tipo          || apunteActual.tipo,
+    titulo:        req.body.titulo        || apunteActual.titulo,
+    contenido:     req.body.contenido     !== undefined ? req.body.contenido : apunteActual.contenido,
+    materia:       req.body.materia       || apunteActual.materia,
+    tags:          req.body.tags          || apunteActual.tags,
+    fechaCreacion: apunteActual.fechaCreacion,
+    fechaEntrega:  req.body.fechaEntrega  !== undefined ? req.body.fechaEntrega : apunteActual.fechaEntrega,
+    foto:          req.body.foto          !== undefined ? req.body.foto  : apunteActual.foto,
+    audio:         req.body.audio         !== undefined ? req.body.audio : apunteActual.audio,
+    video:         req.body.video         !== undefined ? req.body.video : apunteActual.video,
+    lat:           req.body.lat           !== undefined ? req.body.lat   : apunteActual.lat,
+    lng:           req.body.lng           !== undefined ? req.body.lng   : apunteActual.lng,
+    user:          apunteActual.user,
+  };
+
+  apuntes[index] = apunteActualizado;
+  guardarArchivo(apuntes);
+
+  res.json({ ok: true, apunte: apunteActualizado });
+});
+
 // ─── GET /api/materias ────────────────────────────────────────────────────────
 // Retorna lista única de materias registradas (útil para el filtro dropdown)
 router.get("/materias", (req, res) => {

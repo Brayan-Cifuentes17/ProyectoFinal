@@ -265,9 +265,18 @@ function crearApunteHTML(apunte) {
   }
 
   html += '<div class="card-footer">' +
-    '<div class="card-tags">' + tags + '</div>' +
-    footer +
-  '</div></li>';
+      '<div class="card-tags">' + tags + '</div>' +
+      footer +
+    '</div>' +
+    '<div class="card-actions">' +
+      '<button class="btn-accion btn-editar" data-id="' + apunte._id + '">'+
+        '<i class="fa fa-pen"></i> Editar'+
+      '</button>' +
+      '<button class="btn-accion btn-eliminar" data-id="' + apunte._id + '">'+
+        '<i class="fa fa-trash"></i> Eliminar'+
+      '</button>' +
+    '</div>' +
+    '</li>';
 
   return html;
 }
@@ -378,6 +387,7 @@ function aplicarFiltros() {
 
 // ── MODAL 
 var tipoSeleccionado = 'apunte';
+var apunteEditandoId = null;
 
 $btnNuevo.on('click', function () {
   resetModal();
@@ -410,6 +420,9 @@ function resetModal() {
   tipoSeleccionado = 'apunte';
   $('.recurso-btn').removeClass('activo');
   if (camara) camara.apagar();
+  apunteEditandoId = null;
+  $('.modal-titulo').text('Nuevo apunte');
+  $btnGuardar.html('<i class="fa fa-paper-plane"></i> Guardar apunte');
 }
 
 // Toggle tipo apunte/evento
@@ -463,23 +476,32 @@ $btnGuardar.on('click', function () {
     user:         usuario.nombre
   };
 
-  fetch('api', {
-    method: 'POST',
+  var esEdicion = apunteEditandoId !== null;
+  var url    = esEdicion ? 'api/' + encodeURIComponent(apunteEditandoId) : 'api';
+  var metodo = esEdicion ? 'PUT' : 'POST';
+
+  fetch(url, {
+    method: metodo,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   })
   .then(function(res) { return res.json(); })
   .then(function(res) {
     if (res.ok) {
-      apuntesCache.unshift(res.apunte);
+      if (esEdicion) {
+        var idx = apuntesCache.findIndex(function(a) { return a._id === apunteEditandoId; });
+        if (idx !== -1) apuntesCache[idx] = res.apunte;
+        toast('Apunte actualizado ✓', 'success');
+      } else {
+        apuntesCache.unshift(res.apunte);
+        toast('Apunte guardado ✓', 'success');
+      }
       actualizarMaterias(apuntesCache);
       aplicarFiltros();
       cerrarModal();
-      toast('Apunte guardado ✓', 'success');
     }
   })
   .catch(function() {
-    // Sin conexión: Persona 3 (SW + PouchDB) maneja esto
     toast('Guardado sin conexión — se sincronizará después', 'warning');
     cerrarModal();
   });
@@ -591,6 +613,19 @@ window.addEventListener('online',  estadoConexion);
 window.addEventListener('offline', estadoConexion);
 
 // ── NOTIFICACIONES PUSH Y LOCALES ─────────────────────────────────────────────
+function urlBase64ToUint8Array(base64String) {
+  // Añade el padding que le falta al base64url
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  var rawData = atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 function suscribirPush() {
   if (!('serviceWorker' in navigator)) return;
@@ -605,7 +640,7 @@ function suscribirPush() {
             .then(function(key) {
               return reg.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: key
+                applicationServerKey: urlBase64ToUint8Array(key.trim())
               });
             })
             .then(function(newSubs) {
@@ -614,6 +649,10 @@ function suscribirPush() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newSubs)
               });
+            })
+            .catch(function(err) {
+              console.warn('Push no disponible:', err.message);
+              // silencia el error, la app sigue funcionando
             });
           }
         });
@@ -832,6 +871,86 @@ $('#btnExportar').on('click', function () {
   // Descargar
   var nombreArchivo = 'StudySync_' + usuario.nombre.replace(/\s+/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf';
   doc.save(nombreArchivo);
+});
+// ── ELIMINAR ──────────────────────────────────────────────────────────────────
+$timeline.on('click', '.btn-eliminar', function () {
+  var id = $(this).data('id');
+
+  if (!confirm('¿Eliminar este apunte? Esta acción no se puede deshacer.')) return;
+
+  fetch('api/' + encodeURIComponent(id), { method: 'DELETE' })
+    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      if (res.ok) {
+        apuntesCache = apuntesCache.filter(function(a) { return a._id !== id; });
+        actualizarMaterias(apuntesCache);
+        aplicarFiltros();
+        toast('Apunte eliminado', 'warning');
+      }
+    })
+    .catch(function() {
+      toast('Error al eliminar', 'error');
+    });
+});
+
+// ── EDITAR ────────────────────────────────────────────────────────────────────
+$timeline.on('click', '.btn-editar', function () {
+  var id = $(this).data('id');
+  var apunte = apuntesCache.find(function(a) { return a._id === id; });
+  if (!apunte) return;
+
+  apunteEditandoId = id;
+
+  // Precargar datos en el modal
+  $tipoBtns.removeClass('active');
+  $tipoBtns.filter('[data-tipo="' + apunte.tipo + '"]').addClass('active');
+  tipoSeleccionado = apunte.tipo;
+
+  $inputTitulo.val(apunte.titulo);
+  $inputMateria.val(apunte.materia);
+  $txtContenido.val(apunte.contenido || '');
+  $inputTags.val((apunte.tags || []).join(' '));
+
+  if (apunte.tipo === 'evento' && apunte.fechaEntrega) {
+    $grupoFecha.show();
+    // Convertir ISO a formato datetime-local
+    var fechaLocal = new Date(apunte.fechaEntrega);
+    fechaLocal.setMinutes(fechaLocal.getMinutes() - fechaLocal.getTimezoneOffset());
+    $inputFecha.val(fechaLocal.toISOString().slice(0, 16));
+  } else {
+    $grupoFecha.hide();
+    $inputFecha.val('');
+  }
+
+  // Precargar adjuntos existentes
+  adjuntos.foto  = apunte.foto  || null;
+  adjuntos.audio = apunte.audio || null;
+  adjuntos.video = apunte.video || null;
+  adjuntos.lat   = apunte.lat   || null;
+  adjuntos.lng   = apunte.lng   || null;
+
+  // Mostrar preview de adjuntos existentes
+  $recursosPreview.empty();
+  if (apunte.foto)  {
+    $recursosPreview.append('<img src="' + apunte.foto + '" style="border-radius:10px;margin-bottom:6px">');
+    $btnFoto.addClass('activo');
+  }
+  if (apunte.audio) {
+    $recursosPreview.append('<audio controls src="' + apunte.audio + '" style="width:100%;margin-bottom:6px"></audio>');
+    $btnAudio.addClass('activo');
+  }
+  if (apunte.video) {
+    $recursosPreview.append('<video controls src="' + apunte.video + '" style="width:100%;border-radius:10px;margin-bottom:6px"></video>');
+    $btnVideo.addClass('activo');
+  }
+  if (apunte.lat)   $btnUbicacion.addClass('activo');
+
+  // Cambiar título y botón del modal
+  $('.modal-titulo').text('Editar apunte');
+  $btnGuardar.html('<i class="fa fa-save"></i> Guardar cambios');
+
+  // Abrir modal
+  $modal.removeClass('oculto');
 });
 // ── INICIO 
 

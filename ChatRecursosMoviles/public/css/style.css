@@ -551,3 +551,40 @@ html, body {
 }
 .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; }
 .empty-state p { font-size: 14px; }
+/* ── ACCIONES DE TARJETA ── */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px 10px;
+  border-top: 0.5px solid var(--border);
+}
+
+.btn-accion {
+  flex: 1;
+  padding: 7px 0;
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.15s;
+}
+
+.btn-editar {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+.btn-editar:active { background: var(--accent); color: #E8E4FF; }
+
+.btn-eliminar {
+  background: #FCEBEB;
+  color: #501313;
+  border-color: #F5C6C6;
+}
+.btn-eliminar:active { background: #A32D2D; color: white; }
