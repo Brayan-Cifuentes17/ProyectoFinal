@@ -10,30 +10,34 @@ class Camara {
 
 
     encender() {
-
         navigator.mediaDevices.getUserMedia({
-            audio: false,
+            audio: true,
             video: { width: 300, height: 300 }
         }).then( stream => {
-
             this.videoNode.srcObject = stream;
             this.stream = stream;
-
+        }).catch( err => {
+            console.log("Error solicitando cámara con audio:", err);
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: { width: 300, height: 300 }
+            }).then( stream => {
+                this.videoNode.srcObject = stream;
+                this.stream = stream;
+                if (window.toast) toast('Cámara iniciada sin micrófono', 'warning');
+            }).catch( err2 => {
+                if (window.toast) toast('No se pudo acceder a la cámara', 'error');
+            });
         });
-
     }
 
 
     apagar() {
-
-
         this.videoNode.pause();
 
         if ( this.stream ) {
-            this.stream.getTracks()[0].stop();
+            this.stream.getTracks().forEach(track => track.stop());
         }
-
-
     }
 
 

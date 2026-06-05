@@ -15,6 +15,10 @@ var apuntesCache = [];   // copia local de lo que viene del servidor
 
 // Recursos adjuntos pendientes (Persona 2 los llena desde afuera)
 var adjuntos = { foto: null, audio: null, video: null, lat: null, lng: null };
+var audioRecorder = null;
+var audioStream = null;
+var audioChunks = [];
+var isRecordingAudio = false;
 
 // Camara (Persona 2 usa esto)
 var camara = null;
