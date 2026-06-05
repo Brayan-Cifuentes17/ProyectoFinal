@@ -19,7 +19,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="StudySync">
-  <link rel="apple-touch-icon" href="img/newicons/icon-196x196.png">
+  <link rel="apple-touch-icon" href="img/newicons/icon-192x192.png">
 </head>
 <body>
 
@@ -160,29 +160,17 @@
           <button id="btnAudio" class="recurso-btn" title="Grabar audio">
             <i class="fa fa-microphone"></i>
           </button>
-          <button id="btnVideo" class="recurso-btn" title="Grabar video">
-            <i class="fa fa-video"></i>
+          <button id="btnGaleria" class="recurso-btn" title="Adjuntar de galería">
+            <i class="fa fa-images"></i>
           </button>
         </div>
 
+        <!-- Inputs nativos ocultos -->
+        <input type="file" id="inputFotoCamara" accept="image/*" capture="environment" style="display:none">
+        <input type="file" id="inputFotoGaleria" accept="image/*" style="display:none">
+
         <!-- Preview de recursos adjuntos -->
         <div id="recursosPreview" class="recursos-preview"></div>
-
-        <!-- Cámara (Persona 2 activa esto) -->
-        <div id="camaraContenedor" class="camara-contenedor oculto">
-          <video id="player" autoplay></video>
-          <div class="camara-btns">
-            <button id="btnTomarFoto">
-              <i class="fa fa-camera"></i> Tomar foto
-            </button>
-            <button id="btnGrabarVideo" style="background:#e74c3c">
-              <i class="fa fa-video"></i> Grabar video
-            </button>
-            <button id="btnDetenerVideo" class="oculto" style="background:#34495e">
-              <i class="fa fa-stop"></i> Detener
-            </button>
-          </div>
-        </div>
 
       </div>
 

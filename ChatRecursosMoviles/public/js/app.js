@@ -60,10 +60,9 @@ var $materiasList  = $('#materiasList');
 var $btnUbicacion  = $('#btnUbicacion');
 var $btnFoto       = $('#btnFoto');
 var $btnAudio      = $('#btnAudio');
-var $btnVideo      = $('#btnVideo');
-var $btnTomarFoto  = $('#btnTomarFoto');
-var $btnGrabarVideo   = $('#btnGrabarVideo');
-var $btnDetenerVideo  = $('#btnDetenerVideo');
+var $btnGaleria    = $('#btnGaleria');
+var $inputFotoCamara = $('#inputFotoCamara');
+var $inputFotoGaleria = $('#inputFotoGaleria');
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 
@@ -416,14 +415,14 @@ function resetModal() {
   $inputTags.val('');
   $inputFecha.val('');
   $grupoFecha.hide();
-  $camaraContenedor.addClass('oculto');
+  $inputFotoCamara.val('');
+  $inputFotoGaleria.val('');
   $recursosPreview.empty();
   adjuntos = { foto: null, audio: null, video: null, lat: null, lng: null };
   $tipoBtns.removeClass('active');
   $tipoBtns.filter('[data-tipo="apunte"]').addClass('active');
   tipoSeleccionado = 'apunte';
   $('.recurso-btn').removeClass('activo');
-  if (camara) camara.apagar();
   apunteEditandoId = null;
   $('.modal-titulo').text('Nuevo apunte');
   $btnGuardar.html('<i class="fa fa-paper-plane"></i> Guardar apunte');
@@ -514,57 +513,34 @@ $btnGuardar.on('click', function () {
 // ── RECURSOS NATIVOS (hooks para Persona 2) 
 // Persona 2 puede reemplazar estos handlers o llamar las funciones directamente.
 
-// Foto
+function procesarImagen(file, botonActivo) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    adjuntos.foto = e.target.result;
+    $recursosPreview.prepend('<img src="' + adjuntos.foto + '" style="border-radius:10px;margin-bottom:6px">');
+    botonActivo.addClass('activo');
+    toast('Imagen adjuntada ✓', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Foto (Cámara Nativa)
 $btnFoto.on('click', function () {
-  $camaraContenedor.toggleClass('oculto');
-  if (!$camaraContenedor.hasClass('oculto') && camara) {
-    camara.encender();
-  }
+  $inputFotoCamara.click();
 });
 
-$btnTomarFoto.on('click', function () {
-  if (!camara) return;
-  adjuntos.foto = camara.tomarFoto();
-  camara.apagar();
-  $camaraContenedor.addClass('oculto');
-  $recursosPreview.prepend('<img src="' + adjuntos.foto + '" style="border-radius:10px;margin-bottom:6px">');
-  $btnFoto.addClass('activo');
+$inputFotoCamara.on('change', function(e) {
+  procesarImagen(e.target.files[0], $btnFoto);
 });
 
-// Video
-$btnGrabarVideo.on('click', function () {
-  if (!camara) return;
-  try {
-    camara.iniciarGrabacion();
-    $btnGrabarVideo.addClass('oculto');
-    $btnDetenerVideo.removeClass('oculto');
-    toast('Grabando video…');
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
+// Galería (Carrete)
+$btnGaleria.on('click', function () {
+  $inputFotoGaleria.click();
 });
 
-$btnDetenerVideo.on('click', function () {
-  $btnDetenerVideo.addClass('oculto');
-  $btnGrabarVideo.removeClass('oculto');
-  camara.detenerGrabacion().then(function(videoB64) {
-    adjuntos.video = videoB64;
-    camara.apagar();
-    $camaraContenedor.addClass('oculto');
-    $recursosPreview.prepend(
-      '<video controls style="width:100%;border-radius:10px;margin-bottom:6px" src="' + videoB64 + '"></video>'
-    );
-    $btnVideo.addClass('activo');
-    toast('Video capturado ✓', 'success');
-  });
-});
-
-// Botón video abre cámara
-$btnVideo.on('click', function () {
-  $camaraContenedor.toggleClass('oculto');
-  if (!$camaraContenedor.hasClass('oculto') && camara) {
-    camara.encender();
-  }
+$inputFotoGaleria.on('change', function(e) {
+  procesarImagen(e.target.files[0], $btnGaleria);
 });
 
 // Geolocalización
@@ -590,14 +566,19 @@ $btnUbicacion.on('click', function () {
 let grabandoAudio = false;
 $btnAudio.on('click', function () {
   if (!grabandoAudio) {
+    if (camara.iniciarGrabacionAudio() === false) {
+      return; // Falló al iniciar (probablemente por falta de HTTPS)
+    }
     grabandoAudio = true;
-    $btnAudio.text('⏹ Detener audio');
-    camara.iniciarGrabacionAudio();
+    $btnAudio.html('<i class="fa fa-stop"></i>');
+    $btnAudio.addClass('grabando');
   } else {
     grabandoAudio = false;
-    $btnAudio.text('🎤 Grabar audio');
+    $btnAudio.html('<i class="fa fa-microphone"></i>');
+    $btnAudio.removeClass('grabando');
     camara.detenerGrabacionAudio().then(function(base64) {
       adjuntos.audio = base64;
+      $btnAudio.addClass('activo');
       toast('Audio grabado ✓', 'success');
     });
   }

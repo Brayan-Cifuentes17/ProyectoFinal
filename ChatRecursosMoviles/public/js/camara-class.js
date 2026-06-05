@@ -10,6 +10,12 @@ class Camara {
 
 
     encender() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error("getUserMedia no soportado. Probablemente no estás en HTTPS.");
+            if (window.toast) toast('La cámara requiere un entorno seguro (HTTPS)', 'error');
+            return;
+        }
+
         navigator.mediaDevices.getUserMedia({
             audio: true,
             video: { width: 300, height: 300 }
@@ -107,14 +113,24 @@ class Camara {
     }
 
     iniciarGrabacionAudio() {
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-        .then(stream => {
-            this.audioStream = stream;
-            this.audioChunks = [];
-            this.audioRecorder = new MediaRecorder(stream);
-            this.audioRecorder.ondataavailable = e => this.audioChunks.push(e.data);
-            this.audioRecorder.start();
-        });
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error("getUserMedia no soportado para audio. ¿Falta HTTPS?");
+            if (window.toast) toast('El micrófono requiere un entorno seguro (HTTPS)', 'error');
+            return false;
+        }
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            .then(stream => {
+                this.audioStream = stream;
+                this.audioChunks = [];
+                this.audioRecorder = new MediaRecorder(stream);
+                this.audioRecorder.ondataavailable = e => this.audioChunks.push(e.data);
+                this.audioRecorder.start();
+            }).catch(err => {
+                console.log("Error solicitando micrófono:", err);
+                if (window.toast) toast('Permiso de micrófono denegado', 'error');
+            });
+        return true;
     }
 
     detenerGrabacionAudio() {
