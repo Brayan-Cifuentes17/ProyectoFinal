@@ -15,6 +15,10 @@ var apuntesCache = [];   // copia local de lo que viene del servidor
 
 // Recursos adjuntos pendientes (Persona 2 los llena desde afuera)
 var adjuntos = { foto: null, audio: null, video: null, lat: null, lng: null };
+var audioRecorder = null;
+var audioStream = null;
+var audioChunks = [];
+var isRecordingAudio = false;
 
 // Camara (Persona 2 usa esto)
 var camara = null;
@@ -410,6 +414,16 @@ function resetModal() {
   tipoSeleccionado = 'apunte';
   $('.recurso-btn').removeClass('activo');
   if (camara) camara.apagar();
+  if (isRecordingAudio && audioRecorder) {
+    audioRecorder.stop();
+    isRecordingAudio = false;
+    $btnAudio.html('<i class="fa fa-microphone"></i>');
+    $btnAudio.css('color', '');
+  }
+  if (audioStream) {
+    audioStream.getTracks().forEach(function(t) { t.stop(); });
+    audioStream = null;
+  }
 }
 
 // Toggle tipo apunte/evento
@@ -560,9 +574,57 @@ $btnUbicacion.on('click', function () {
   );
 });
 
-// Audio — Persona 2 implementa esto con MediaRecorder
+// Audio — Grabación de nota de voz
 $btnAudio.on('click', function () {
-  toast('Función de audio — implementada por Persona 2', 'info');
+  if (isRecordingAudio) {
+    // Detener grabación
+    audioRecorder.stop();
+    isRecordingAudio = false;
+    $btnAudio.html('<i class="fa fa-microphone"></i>');
+    $btnAudio.css('color', '');
+    toast('Grabación finalizada ✓', 'success');
+  } else {
+    // Iniciar grabación
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast('Tu navegador no soporta grabar audio', 'warning');
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        audioStream = stream;
+        audioRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        
+        audioRecorder.ondataavailable = function(e) {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        audioRecorder.onstop = function() {
+          var blob = new Blob(audioChunks, { type: 'audio/webm' });
+          var reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = function() {
+            adjuntos.audio = reader.result;
+            $recursosPreview.prepend('<audio controls src="' + reader.result + '" style="width:100%; margin-bottom:6px; border-radius:10px"></audio>');
+            $btnAudio.addClass('activo');
+          };
+          if (audioStream) {
+            audioStream.getTracks().forEach(function(track) { track.stop(); });
+            audioStream = null;
+          }
+        };
+
+        audioRecorder.start();
+        isRecordingAudio = true;
+        $btnAudio.html('<i class="fa fa-stop"></i>');
+        $btnAudio.css('color', '#e74c3c');
+        toast('Grabando audio…', 'info');
+      })
+      .catch(function(err) {
+        toast('No se pudo acceder al micrófono', 'error');
+        console.log("Error de micrófono:", err);
+      });
+  }
 });
 
 // ── ONLINE / OFFLINE
